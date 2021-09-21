@@ -1,0 +1,111 @@
+apply plugin: 'java-library'
+apply plugin: 'maven-publish'
+
+group 'io.github.noeppi_noeppi.tools'
+
+configurations {
+    apiImplementation
+    api.extendsFrom(apiImplementation)
+    
+    apiImplementationResolvable
+    apiImplementationResolvable.extendsFrom(apiImplementation)
+    
+    processorImplementation
+    processorImplementation.extendsFrom(apiImplementation)
+
+    processorImplementationResolvable
+    processorImplementationResolvable.extendsFrom(processorImplementation)
+}
+
+repositories {
+    mavenCentral()
+    maven { url = 'https://maven.minecraftforge.net' }
+}
+
+dependencies {
+    implementation 'org.ow2.asm:asm:9.2'
+    implementation 'org.ow2.asm:asm-tree:9.2'
+    implementation 'org.apache.logging.log4j:log4j-api:2.14.1'
+    implementation 'org.apache.logging.log4j:log4j-core:2.14.1'
+    compileOnly 'cpw.mods:modlauncher:9.0.7'
+}
+
+sourceSets {
+    api {
+        compileClasspath = configurations.apiImplementationResolvable
+    }
+    processor {
+        compileClasspath = configurations.processorImplementationResolvable
+    }
+}
+
+dependencies {
+    api sourceSets.api.output
+    processorImplementation sourceSets.api.output
+}
+
+task apiJar(type: Jar) {
+    classifier 'api'
+    
+    from sourceSets.api.output
+    
+    manifest {
+        attributes([
+                "Automatic-Module-Name": "io.github.noeppi_noeppi.tools.dye"
+        ])
+    }
+}
+
+jar {
+    from sourceSets.api.output
+    from sourceSets.main.output
+    
+    manifest {
+        attributes([
+                "Automatic-Module-Name": "io.github.noeppi_noeppi.tools.dye"
+        ])
+    }
+}
+
+task processorJar(type: Jar) {
+    classifier 'processor'
+    
+    from sourceSets.api.output
+    from sourceSets.processor.output
+    
+    manifest {
+        attributes([
+                "Automatic-Module-Name": "io.github.noeppi_noeppi.tools.dye.processor"
+        ])
+    }
+}
+
+build.dependsOn(apiJar)
+build.dependsOn(processorJar)
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            artifact apiJar
+            artifact processorJar
+            groupId = project.group
+            artifactId = project.name
+            version = project.version
+            pom {
+                licenses {
+                    license {
+                        name = "The Apache License, Version 2.0"
+                        url = "https://www.apache.org/licenses/LICENSE-2.0.txt"
+                    }
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            url rootProject.file('../MinecraftUtilities/maven')
+        }
+    }
+}
