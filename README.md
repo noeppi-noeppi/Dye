@@ -33,6 +33,8 @@ Example:
 ```java
 package test;
 
+import io.github.noeppi_noeppi.tools.dye.api.Bind;
+
 import java.lang.invoke.CallSite;
 import java.lang.invoke.ConstantCallSite;
 import java.lang.invoke.MethodHandles;
