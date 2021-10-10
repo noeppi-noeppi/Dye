@@ -13,8 +13,7 @@ import javax.tools.FileObject;
 import javax.tools.StandardLocation;
 import java.io.IOException;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -31,7 +30,7 @@ public class BindProcessor extends Processor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        List<String> list = new ArrayList<>();
+        Set<String> list = new HashSet<>();
         for (Element element : roundEnv.getElementsAnnotatedWith(Bind.class)) {
             if (element.getKind() != ElementKind.METHOD && element.getKind() != ElementKind.CONSTRUCTOR) {
                 messager.printMessage(Diagnostic.Kind.ERROR, "Only methods and constructors can be annotated with @Bind", element);
@@ -71,7 +70,7 @@ public class BindProcessor extends Processor {
         }
         if (!list.isEmpty()) {
             try {
-                FileObject file = filer.createResource(StandardLocation.CLASS_OUTPUT, "", "META-INF/dye-bind.txt");
+                FileObject file = filer.createResource(StandardLocation.CLASS_OUTPUT, "", "dye-bind.txt");
                 Writer writer = file.openWriter();
                 for (String line : list.stream().sorted().toList()) {
                     writer.write(line + "\n");

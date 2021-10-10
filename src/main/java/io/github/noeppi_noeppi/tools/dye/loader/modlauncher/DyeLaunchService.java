@@ -35,7 +35,7 @@ public class DyeLaunchService implements ILaunchPluginService {
         String cls = classType.getInternalName();
         if (cls.startsWith("java/") || cls.startsWith("javax/") || cls.startsWith("scala/")
                 || cls.startsWith("cpw/mods/modlauncher/") || cls.startsWith("com/sun/")
-                || cls.startsWith("sun/")|| cls.startsWith("jdk/internal/")) {
+                || cls.startsWith("sun/") || cls.startsWith("jdk/internal/")) {
             return DISCARD;
         } else {
             return TRANSFORM;
