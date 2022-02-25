@@ -70,7 +70,7 @@ public class BindProcessor extends Processor {
         }
         if (!list.isEmpty()) {
             try {
-                FileObject file = filer.createResource(StandardLocation.CLASS_OUTPUT, "", "dye-bind.txt");
+                FileObject file = filer.createResource(StandardLocation.CLASS_OUTPUT, "", "META-INF/dye-bind.txt");
                 Writer writer = file.openWriter();
                 for (String line : list.stream().sorted().toList()) {
                     writer.write(line + "\n");
